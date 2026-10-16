@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+<BaseLayout title="2048" description="原创实现的像素风 2048 小游戏。" game>
+  <section class="narrow game-layout">
+    <header class="page-header">
+      <p class="eyebrow">GAME / 02</p>
+      <h1>2048</h1>
+      <p>滑动或使用方向键合并数字，目标是合成 2048。</p>
+    </header>
+    <div class="game-panel" id="game-2048">
+      <div class="game-hud">
+        <span>得分 <strong data-score>0</strong></span>
+        <span>最高 <strong data-high>0</strong></span>
+        <span data-state>准备</span>
+      </div>
+      <div class="game-stage">
+        <div class="board-2048" data-board aria-label="2048 棋盘"></div>
+        <div class="game-controls">
+          <button class="button small" data-action="start">开始</button>
+          <button class="button small secondary" data-action="restart">重新开始</button>
+        </div>
+        <p class="game-help">键盘：方向键或 WASD · 移动端：在棋盘上滑动</p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+<script>
+  import { start2048Game } from '../../games/game2048';
+  const root = document.querySelector('#game-2048');
+  if (root instanceof HTMLElement) start2048Game(root);
+</script>

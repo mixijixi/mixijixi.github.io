@@ -1,0 +1,25 @@
+---
+type Props = {
+  title: string;
+  description: string;
+  pubDate: Date;
+  tags: string[];
+  href: string;
+};
+
+const { title, description, pubDate, tags, href } = Astro.props;
+const date = pubDate.toLocaleDateString('zh-CN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
+const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL.slice(0, -1) : import.meta.env.BASE_URL;
+---
+<article class="post-card">
+  <div class="post-meta">{date}</div>
+  <h2><a href={`${base}${href}`}>{title}</a></h2>
+  <p>{description}</p>
+  <div class="tag-list">
+    {tags.map((tag) => <span class="tag cyan">{tag}</span>)}
+  </div>
+</article>

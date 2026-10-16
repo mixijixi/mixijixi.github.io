@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+<BaseLayout title="扫雷" description="支持三种难度的原创像素风扫雷小游戏。" game>
+  <section class="narrow game-layout">
+    <header class="page-header">
+      <p class="eyebrow">GAME / 03</p>
+      <h1>扫雷</h1>
+      <p>避开所有地雷。第一次点击永远安全，右键或标记模式可以插旗。</p>
+    </header>
+    <div class="game-panel" id="minesweeper-game">
+      <div class="game-hud">
+        <span>剩余雷数 <strong data-mines>10</strong></span>
+        <span>用时 <strong data-time>0s</strong></span>
+        <span>最佳 <strong data-best>—</strong></span>
+        <span data-state>准备</span>
+      </div>
+      <div class="game-stage">
+        <div class="filters" style="justify-content: center; margin: 0;">
+          <select data-level aria-label="选择难度">
+            <option value="easy">初级 9 × 9</option>
+            <option value="medium">中级 12 × 12</option>
+            <option value="hard">高级 14 × 18</option>
+          </select>
+          <button class="button small secondary" data-action="mark" aria-pressed="false">标记模式：关</button>
+        </div>
+        <div class="mine-board" data-board aria-label="扫雷棋盘"></div>
+        <div class="game-controls">
+          <button class="button small" data-action="start">开始 / 重置</button>
+          <button class="button small secondary" data-action="restart">重新开始</button>
+        </div>
+        <p class="game-help">鼠标左键翻开 · 右键插旗 · 移动端使用标记模式</p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+<script>
+  import { startMinesweeperGame } from '../../games/minesweeper';
+  const root = document.querySelector('#minesweeper-game');
+  if (root instanceof HTMLElement) startMinesweeperGame(root);
+</script>

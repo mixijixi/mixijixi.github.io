@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+<BaseLayout title="魂斗罗风格射击" description="原创实现的像素风横版射击小游戏。" game>
+  <section class="narrow game-layout">
+    <header class="page-header">
+      <p class="eyebrow">GAME / 06</p>
+      <h1>魂斗罗风格射击</h1>
+      <p>原创代码绘制的横版射击关卡。左右移动、跳跃、射击，消灭 12 个敌人即可通关。</p>
+    </header>
+    <div class="game-panel" id="contra-game">
+      <div class="game-hud">
+        <span>得分 <strong data-score>0</strong></span>
+        <span>最高 <strong data-high>0</strong></span>
+        <span>生命 <strong data-lives>3</strong></span>
+        <span data-state>准备</span>
+      </div>
+      <div class="game-stage">
+        <canvas width="640" height="360" aria-label="魂斗罗风格射击游戏画面"></canvas>
+        <div class="touch-controls" aria-label="触控操作">
+          <button class="up" data-touch="jump" aria-label="跳跃">▲</button>
+          <button class="left" data-touch="left" aria-label="向左">◀</button>
+          <button class="down" data-touch="shoot" aria-label="射击">●</button>
+          <button class="right" data-touch="right" aria-label="向右">▶</button>
+        </div>
+        <div class="game-controls">
+          <button class="button small" data-action="start">开始</button>
+          <button class="button small secondary" data-action="pause">暂停</button>
+          <button class="button small secondary" data-action="restart">重新开始</button>
+        </div>
+        <p class="game-help">键盘：左右移动、上跳跃、空格射击 · 移动端：使用触控按钮</p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+<script>
+  import { startContraGame } from '../../games/contra';
+  const root = document.querySelector('#contra-game');
+  if (root instanceof HTMLElement) startContraGame(root);
+</script>

@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+<BaseLayout title="贪吃蛇" description="原创实现的像素风贪吃蛇小游戏。" game>
+  <section class="narrow game-layout">
+    <header class="page-header">
+      <p class="eyebrow">GAME / 01</p>
+      <h1>贪吃蛇</h1>
+      <p>吃掉黄色食物，蛇身会变长。撞墙或撞到自己就结束。</p>
+    </header>
+    <div class="game-panel" id="snake-game">
+      <div class="game-hud">
+        <span>得分 <strong data-score>0</strong></span>
+        <span>最高 <strong data-high>0</strong></span>
+        <span data-state>准备</span>
+      </div>
+      <div class="game-stage">
+        <canvas width="360" height="360" aria-label="贪吃蛇游戏画面"></canvas>
+        <div class="touch-controls" aria-label="触控方向键">
+          <button class="up" data-direction="ArrowUp" aria-label="向上">▲</button>
+          <button class="left" data-direction="ArrowLeft" aria-label="向左">◀</button>
+          <button class="down" data-direction="ArrowDown" aria-label="向下">▼</button>
+          <button class="right" data-direction="ArrowRight" aria-label="向右">▶</button>
+        </div>
+        <div class="game-controls">
+          <button class="button small" data-action="start">开始</button>
+          <button class="button small secondary" data-action="pause">暂停</button>
+          <button class="button small secondary" data-action="restart">重新开始</button>
+        </div>
+        <p class="game-help">键盘：方向键或 WASD · 移动端：点击方向按钮</p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+<script>
+  import { startSnakeGame } from '../../games/snake';
+  const root = document.querySelector('#snake-game');
+  if (root instanceof HTMLElement) startSnakeGame(root);
+</script>

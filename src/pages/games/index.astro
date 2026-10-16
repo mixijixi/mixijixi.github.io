@@ -1,0 +1,61 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import GameCard from '../../components/GameCard.astro';
+---
+<BaseLayout title="小游戏合集" description="六个原创实现的中文像素风网页小游戏。">
+  <section class="narrow">
+    <header class="page-header">
+      <p class="eyebrow">ARCADE / SELECT GAME</p>
+      <h1>小游戏合集</h1>
+      <p>所有游戏都使用原创代码绘制，不需要登录，最高分保存在当前浏览器中。</p>
+    </header>
+
+    <div class="card-grid">
+      <GameCard title="贪吃蛇" description="吃掉食物，蛇身会变长。撞墙或撞到自己就结束。" href="/games/snake/" tags={['方向键', 'WASD', '触控']} icon="🐍" />
+      <GameCard title="2048" description="移动并合并数字，目标是合成 2048。" href="/games/2048/" tags={['滑动', '策略']} icon="🔢" />
+      <GameCard title="扫雷" description="避开所有地雷，支持三种难度和标记模式。" href="/games/minesweeper/" tags={['逻辑', '标记']} icon="💣" />
+      <GameCard title="打砖块" description="控制挡板反弹小球，清除全部砖块。" href="/games/breakout/" tags={['键盘', '触控']} icon="🧱" />
+      <GameCard title="俄罗斯方块" description="旋转和摆放方块，完成消行挑战。" href="/games/tetris/" tags={['经典', '计分']} icon="🧊" />
+      <GameCard title="魂斗罗风格射击" description="原创横版射击关卡，跳跃、射击并消灭敌人。" href="/games/contra/" tags={['原创', '街机']} icon="🚀" />
+    </div>
+
+    <section style="margin-top: 52px;" aria-labelledby="best-title">
+      <p class="eyebrow">BEST SCORES</p>
+      <h2 id="best-title">最佳成绩</h2>
+      <p style="color: var(--muted);">成绩保存在当前浏览器（localStorage），换设备或清理数据后会重置。</p>
+      <ul class="best-list">
+        <li><span>🐍 贪吃蛇</span><strong data-best="snake">—</strong></li>
+        <li><span>🔢 2048</span><strong data-best="2048">—</strong></li>
+        <li><span>💣 扫雷 · 最快通关</span><strong data-best="minesweeper">—</strong></li>
+        <li><span>🧱 打砖块</span><strong data-best="breakout">—</strong></li>
+        <li><span>🧊 俄罗斯方块</span><strong data-best="tetris">—</strong></li>
+        <li><span>🚀 魂斗罗风格射击</span><strong data-best="contra">—</strong></li>
+      </ul>
+    </section>
+  </section>
+  <script>
+    import { highScoreKey, readBestTime, readHighScore } from '../../games/shared';
+
+    const scoreText = (game: string) => {
+      const value = readHighScore(highScoreKey(game));
+      return value ? String(value) : '—';
+    };
+
+    const entries: Array<[string, string]> = [
+      ['snake', scoreText('snake')],
+      ['2048', scoreText('2048')],
+      ['breakout', scoreText('breakout')],
+      ['tetris', scoreText('tetris')],
+      ['contra', scoreText('contra')],
+      ['minesweeper', (() => {
+        const times = ['easy', 'medium', 'hard'].map((level) => readBestTime(level)).filter((time) => time > 0);
+        return times.length ? `${Math.min(...times)}s` : '—';
+      })()]
+    ];
+
+    entries.forEach(([key, value]) => {
+      const node = document.querySelector<HTMLElement>(`[data-best="${key}"]`);
+      if (node) node.textContent = value;
+    });
+  </script>
+</BaseLayout>

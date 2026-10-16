@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+<BaseLayout title="打砖块" description="原创实现的像素风打砖块小游戏。" game>
+  <section class="narrow game-layout">
+    <header class="page-header">
+      <p class="eyebrow">GAME / 04</p>
+      <h1>打砖块</h1>
+      <p>控制挡板反弹小球，清除全部砖块并保住生命值。</p>
+    </header>
+    <div class="game-panel" id="breakout-game">
+      <div class="game-hud">
+        <span>得分 <strong data-score>0</strong></span>
+        <span>最高 <strong data-high>0</strong></span>
+        <span>生命 <strong data-lives>3</strong></span>
+        <span data-state>准备</span>
+      </div>
+      <div class="game-stage">
+        <canvas width="480" height="360" aria-label="打砖块游戏画面"></canvas>
+        <div class="game-controls">
+          <button class="button small" data-action="start">开始</button>
+          <button class="button small secondary" data-action="pause">暂停</button>
+          <button class="button small secondary" data-action="restart">重新开始</button>
+        </div>
+        <p class="game-help">键盘：左右方向键或 A / D · 移动端：拖动挡板</p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+<script>
+  import { startBreakoutGame } from '../../games/breakout';
+  const root = document.querySelector('#breakout-game');
+  if (root instanceof HTMLElement) startBreakoutGame(root);
+</script>

@@ -1,0 +1,83 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+
+const posts = (await getCollection('blog'))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort((a, b) => a.localeCompare(b, 'zh-CN'));
+---
+<BaseLayout title="博客" description="关于 Astro、TypeScript、GitHub Pages 和小游戏开发的中文技术博客。">
+  <section class="narrow">
+    <header class="page-header">
+      <p class="eyebrow">BLOG / INDEX</p>
+      <h1>技术博客</h1>
+      <p>把踩过的坑、做过的实验和还想继续验证的想法，整理成可以搜索和重读的记录。</p>
+    </header>
+
+    <div class="filters" data-blog-filters>
+      <input data-search type="search" placeholder="搜索文章标题或摘要" aria-label="搜索文章" />
+      <select data-tag-filter aria-label="按标签筛选">
+        <option value="">全部标签</option>
+        {tags.map((tag) => <option value={tag}>{tag}</option>)}
+      </select>
+      <button class="button small secondary" data-clear type="button">清除筛选</button>
+    </div>
+
+    <div class="post-list" data-post-list>
+      {posts.map((post) => (
+        <div data-post-card data-tags={post.data.tags.join('|')} data-search-text={`${post.data.title} ${post.data.description}`}>
+          <PostCard
+            title={post.data.title}
+            description={post.data.description}
+            pubDate={post.data.pubDate}
+            tags={post.data.tags}
+            href={`/blog/${post.id}/`}
+          />
+        </div>
+      ))}
+    </div>
+    <div class="empty-state" data-empty hidden>没有匹配的文章，试试清除筛选。</div>
+  </section>
+</BaseLayout>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-blog-filters]');
+
+  const empty = document.querySelector<HTMLElement>('[data-empty]');
+  const search = document.querySelector<HTMLInputElement>('[data-search]');
+  const tagFilter = document.querySelector<HTMLSelectElement>('[data-tag-filter]');
+  const clear = document.querySelector<HTMLButtonElement>('[data-clear]');
+  const cards = [...document.querySelectorAll<HTMLElement>('[data-post-card]')];
+
+  const update = () => {
+    const keyword = (search?.value ?? '').trim().toLowerCase();
+    const selectedTag = tagFilter?.value ?? '';
+    let visible = 0;
+    for (const card of cards) {
+      const text = (card.dataset.searchText ?? '').toLowerCase();
+      const tags = (card.dataset.tags ?? '').split('|');
+      const matched = (!keyword || text.includes(keyword)) && (!selectedTag || tags.includes(selectedTag));
+      card.hidden = !matched;
+      if (matched) visible += 1;
+    }
+    if (empty) empty.hidden = visible !== 0;
+  };
+
+  search?.addEventListener('input', update);
+  tagFilter?.addEventListener('change', update);
+  clear?.addEventListener('click', () => {
+    if (search) search.value = '';
+    if (tagFilter) tagFilter.value = '';
+    update();
+  });
+  root?.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      if (search) search.value = '';
+      if (tagFilter) tagFilter.value = '';
+      update();
+    }
+  });
+</script>
+

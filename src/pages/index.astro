@@ -1,0 +1,137 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import GameCard from '../components/GameCard.astro';
+import { profile } from '../data/profile';
+
+const posts = (await getCollection('blog'))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL.slice(0, -1) : import.meta.env.BASE_URL;
+---
+<BaseLayout>
+  <section class="hero section">
+    <div class="hero-grid">
+      <div>
+        <p class="kicker">PLAYER 01 · {profile.handle}</p>
+        <h1>把技术写成文章，<br />把灵感做成游戏。</h1>
+        <p class="lede">{profile.description}</p>
+        <div class="button-row">
+          <a class="button" href={`${base}/blog/`}>进入博客</a>
+          <a class="button secondary" href={`${base}/games/`}>打开小游戏合集</a>
+        </div>
+      </div>
+      <aside class="status-panel" aria-label="个人状态">
+        <div class="status-line"><span class="status-label">当前状态</span><strong class="status-value">{profile.status}</strong></div>
+        <div class="status-line"><span class="status-label">坐标</span><strong class="status-value">{profile.location}</strong></div>
+        <div class="status-line"><span class="status-label">主武器</span><strong class="status-value">TypeScript + Canvas</strong></div>
+        <div class="status-line"><span class="status-label">联系方式</span><strong class="status-value">{profile.email}</strong></div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="latest-posts">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">LOG / 001</p>
+        <h2 id="latest-posts">最新文章</h2>
+      </div>
+      <p>记录前端实践、静态部署和小游戏开发中的真实问题。</p>
+    </div>
+    <div class="post-list">
+      {posts.map((post) => (
+        <PostCard
+          title={post.data.title}
+          description={post.data.description}
+          pubDate={post.data.pubDate}
+          tags={post.data.tags}
+          href={`/blog/${post.id}/`}
+        />
+      ))}
+    </div>
+    <div class="button-row" style="margin-top: 20px;">
+      <a class="button secondary" href={`${base}/blog/`}>查看全部文章</a>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="games-title">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">ARCADE / 006</p>
+        <h2 id="games-title">小游戏入口</h2>
+      </div>
+      <p>六个原创实现的浏览器小游戏，最高分保存在本机，不需要登录。</p>
+    </div>
+    <div class="card-grid">
+      <GameCard title="贪吃蛇" description="经典成长规则，支持键盘和触控方向键。" href="/games/snake/" tags={['键盘', '触控']} icon="🐍" />
+      <GameCard title="2048" description="合并数字，挑战自己的最高分。" href="/games/2048/" tags={['滑动', '策略']} icon="🔢" />
+      <GameCard title="扫雷" description="三种难度，第一次点击永远安全。" href="/games/minesweeper/" tags={['逻辑', '难度']} icon="💣" />
+    </div>
+    <div class="button-row" style="margin-top: 20px;">
+      <a class="button secondary" href={`${base}/games/`}>查看全部 6 个游戏</a>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="stack-title">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">LOADOUT</p>
+        <h2 id="stack-title">技术栈</h2>
+      </div>
+    </div>
+    <div class="card-grid">
+      <article class="card">
+        <span class="icon-box" aria-hidden="true">◈</span>
+        <h3>静态优先</h3>
+        <p>Astro 静态输出、GitHub Pages 和不依赖后端的内容结构。</p>
+      </article>
+      <article class="card">
+        <span class="icon-box" aria-hidden="true">⌘</span>
+        <h3>原生交互</h3>
+        <p>TypeScript、Canvas、键盘和触控操作，保持代码边界清晰。</p>
+      </article>
+      <article class="card">
+        <span class="icon-box" aria-hidden="true">✦</span>
+        <h3>像素表达</h3>
+        <p>复古 HUD、深色背景和可读中文排版共同组成视觉语言。</p>
+      </article>
+    </div>
+    <div class="tag-list" style="margin-top: 20px;">
+      {profile.skills.map((skill) => <span class="tag green">{skill}</span>)}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="timeline-title">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">SAVE POINT</p>
+        <h2 id="timeline-title">项目时间线</h2>
+      </div>
+    </div>
+    <ul class="timeline">
+      {profile.timeline.map((item) => (
+        <li>
+          <div class="timeline-date">{item.date}</div>
+          <h3>{item.title}</h3>
+          <p>{item.description}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="section" aria-labelledby="contact-title">
+    <div class="contact-panel panel">
+      <div>
+        <p class="eyebrow">CONTACT</p>
+        <h2 id="contact-title">一起做点好玩的东西</h2>
+        <p>欢迎通过 GitHub 或邮箱交流前端、游戏和独立项目。</p>
+      </div>
+      <div class="button-row">
+        <a class="button" href={profile.github} rel="noreferrer" target="_blank">打开 GitHub</a>
+        <a class="button secondary" href={`mailto:${profile.email}`}>发送邮件</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

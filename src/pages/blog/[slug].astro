@@ -1,0 +1,109 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = (await getCollection('blog'))
+    .filter((post) => !post.data.draft)
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+  return posts.map((post, index) => ({
+    params: { slug: post.id },
+    props: {
+      post,
+      previous: posts[index + 1] ?? null,
+      next: posts[index - 1] ?? null
+    }
+  }));
+}
+
+const { post, previous, next } = Astro.props;
+const { Content, headings } = await render(post);
+const date = post.data.pubDate.toLocaleDateString('zh-CN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
+const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL.slice(0, -1) : import.meta.env.BASE_URL;
+---
+<BaseLayout title={post.data.title} description={post.data.description}>
+  <article class="narrow prose">
+    <p class="eyebrow">BLOG / {date}</p>
+    <h1>{post.data.title}</h1>
+    <p>{post.data.description}</p>
+    <div class="tag-list" style="margin: 20px 0 32px;">
+      {post.data.tags.map((tag) => <span class="tag cyan">{tag}</span>)}
+    </div>
+
+    {headings.length > 1 && (
+      <nav aria-label="文章目录" class="panel" style="padding: 16px 20px; margin-bottom: 32px;">
+        <strong>本文目录</strong>
+        <ul>
+          {headings.filter((heading) => heading.depth === 2).map((heading) => (
+            <li><a href={`#${heading.slug}`}>{heading.text}</a></li>
+          ))}
+        </ul>
+      </nav>
+    )}
+
+    <Content />
+
+    <nav class="post-nav" aria-label="文章导航">
+      <div>
+        {previous && <a href={`${base}/blog/${previous.id}/`}>← {previous.data.title}</a>}
+      </div>
+      <div>
+        {next && <a href={`${base}/blog/${next.id}/`}>{next.data.title} →</a>}
+      </div>
+    </nav>
+  </article>
+
+  <button class="back-to-top" data-back-to-top type="button" hidden aria-label="返回顶部">↑ 返回顶部</button>
+
+  <script>
+    // 代码块：包装为带顶栏和“复制代码”按钮的面板
+    document.querySelectorAll<HTMLElement>('.prose pre').forEach((pre) => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'code-block';
+      const bar = document.createElement('div');
+      bar.className = 'code-block-bar';
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'code-copy';
+      button.textContent = '复制代码';
+      bar.appendChild(button);
+      pre.parentNode?.insertBefore(wrapper, pre);
+      wrapper.appendChild(bar);
+      wrapper.appendChild(pre);
+      button.addEventListener('click', async () => {
+        const code = pre.querySelector('code')?.textContent ?? '';
+        try {
+          await navigator.clipboard.writeText(code);
+          button.textContent = '已复制 ✓';
+          button.dataset.copied = 'true';
+        } catch {
+          button.textContent = '复制失败';
+          button.dataset.copied = 'false';
+        }
+        window.setTimeout(() => {
+          button.textContent = '复制代码';
+          delete button.dataset.copied;
+        }, 1600);
+      });
+    });
+
+    // 返回顶部：滚动超过 600px 后出现
+    const toTop = document.querySelector<HTMLButtonElement>('[data-back-to-top]');
+    if (toTop) {
+      const toggle = () => {
+        toTop.hidden = window.scrollY <= 600;
+      };
+      toggle();
+      window.addEventListener('scroll', toggle, { passive: true });
+      toTop.addEventListener('click', () => {
+        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+      });
+    }
+  </script>
+</BaseLayout>
