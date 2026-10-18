@@ -14,15 +14,15 @@ export type TimelineItem = {
 export const profile = {
   siteName: '明心的像素工坊',
   name: '明心',
-  handle: 'poshanhezai',
+  handle: 'mixijixi',
   title: '前端开发者 / 像素玩家',
   description: '我喜欢把复杂的前端问题拆成清晰的模块，也喜欢用复古像素语言记录技术与生活。',
   status: '正在构建个人主页与小游戏合集',
   location: '中国 · 远程协作',
   email: '2189827829@qq.com',
-  github: 'https://github.com/poshanhezai',
+  github: 'https://github.com/mixijixi',
   socialLinks: [
-    { label: 'GitHub', href: 'https://github.com/poshanhezai' }
+    { label: 'GitHub', href: 'https://github.com/mixijixi' }
   ],
   skills: [
     'Astro',
